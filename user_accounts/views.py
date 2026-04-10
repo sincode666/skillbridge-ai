@@ -22,13 +22,14 @@ class LoginView(APIView):
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
+        if not username or not password:
+            return Response({'error': 'Username and password required'}, status=400)
         #get the username and password from the db and checks if it is present or not
         user = authenticate(username=username, password=password)
         if user:
             refresh = RefreshToken.for_user(user)
             return Response({
-                'login':'corect',
                 'access': str(refresh.access_token),
                 'refresh': str(refresh),
-            })
+            },status=200)
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
