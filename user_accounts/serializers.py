@@ -32,6 +32,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError("Username already exists")
         return value
+    '''all validated_data is automatically called when is _valid() is called and if every data is correct 
+    then all the data is in clean formate and goes into validated_data.
+    and then .save() is called then create runs auomatically and it has pass validated_data which is valied and verified 
+    s it get's created .'''
+
+
 
     def create(self, validated_data):
         user = User.objects.create_user(

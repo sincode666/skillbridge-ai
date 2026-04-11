@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .serializers import RegisterSerializer
 from rest_framework.permissions import IsAuthenticated
+from .permissions import IsOwner
 
 class RegisterView(APIView): #here apiview we can say that it takes the method init and convert it into the function we use it as <classname>.as_view() in endpoint
     def post(self, request):
@@ -50,3 +51,14 @@ class LogoutView(APIView):
             return Response({'message': 'Logout successful'}, status=200)
         except Exception as e:
             return Response({'error': str(e)}, status=400)
+        
+class ProfileView(APIView):
+    permission_classes = (IsAuthenticated, IsOwner)
+    
+    def get(self, request):
+        user = request.user
+        self.check_object_permissions(request, user)
+        return Response({
+            'username': user.username,
+            'email': user.email,
+        }, status=200)
